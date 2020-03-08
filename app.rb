@@ -24,3 +24,18 @@ get "/" do
     @events = events_table.all.to_a
     view "events"
 end
+
+get "/events/:id" do
+    puts "params: #{params}"
+
+    pp events_table.where(id: params[:id]).to_a[0]
+    @event = events_table.where(id: params[:id]).to_a[0]
+    view "event"
+end
+
+get "/events/:id/rsvps/new" do
+    puts "params: #{params}"
+
+    @event = events_table.where(id: params[:id]).to_a[0]
+    view "new_rsvp"
+end
