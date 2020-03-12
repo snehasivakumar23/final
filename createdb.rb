@@ -15,10 +15,15 @@ end
 DB.create_table! :rsvps do
   primary_key :id
   foreign_key :event_id
+  foreign_key :user_id
   Boolean :going
+  String :comments, text: true
+end
+DB.create_table! :users do
+  primary_key :id
   String :name
   String :email
-  String :comments, text: true
+  String :password
 end
 
 # Insert initial (seed) data

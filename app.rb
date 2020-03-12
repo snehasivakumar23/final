@@ -16,6 +16,7 @@ after { puts; }                                                                 
 
 events_table = DB.from(:events)
 rsvps_table = DB.from(:rsvps)
+users_table = DB.from(:users)
 
 get "/" do
     puts "params: #{params}"
@@ -38,4 +39,14 @@ get "/events/:id/rsvps/new" do
 
     @event = events_table.where(id: params[:id]).to_a[0]
     view "new_rsvp"
+end
+
+get "/events/:id/rsvps/create" do
+    puts params
+    @event = events_table.where(id: params["id"]).to_a[0]
+    rsvps_table.insert(event_id: params["id"],
+                       user_id: session["user_id"],
+                       going: params["going"],
+                       comments: params["comments"])
+    view "create_rsvp"
 end
