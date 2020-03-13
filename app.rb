@@ -26,6 +26,17 @@ get "/" do
     view "events"
 end
 
+get "/" do
+  # lat: ± 90
+  # long: ± 180
+  @lat= 31.5313113 
+  @long = 34.8667654
+  @lat_long = "#{@lat}, #{@long}"
+  view "where2"
+
+  
+end
+
 get "/events/:id" do
     puts "params: #{params}"
 
@@ -69,11 +80,12 @@ get "/logins/new" do
 end
 
 post "/logins/create" do
-    user = users_table.where(email: params["email"]).to_a[0]
-    puts BCrypt::Password::new(user[:password])
-    if user && BCrypt::Password::new(user[:password]) == params["password"]
-        session["user_id"] = user[:id]
-        @current_user = user
+    puts params
+    email_address = params["email"]
+    password = params["password"]
+    @user = users_table.where(email: email_address).to_a[0]
+
+    if @user
         view "create_login"
     else
         view "create_login_failed"
