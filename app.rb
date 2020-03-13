@@ -26,13 +26,8 @@ get "/" do
     view "events"
 end
 
-get "/" do
-  # lat: ± 90
-  # long: ± 180
-  @lat= 31.5313113 
-  @long = 34.8667654
-  @lat_long = "#{@lat}, #{@long}"
-  view "where2"
+get "/gothere" do
+    view "where2"
 
   
 end
