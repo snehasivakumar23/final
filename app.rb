@@ -18,6 +18,10 @@ events_table = DB.from(:events)
 rsvps_table = DB.from(:rsvps)
 users_table = DB.from(:users)
 
+before do 
+    @current_user = users_table.where(id: session["user_id"]).to_a[0]
+end
+
 get "/" do
     puts "params: #{params}"
 
@@ -53,9 +57,7 @@ get "/events/:id/rsvps/create" do
     rsvps_table.insert(event_id: params["id"],
                        user_id: session["user_id"],
                        going: params["going"],
-                       comments: params["comments"], 
-                       name: params["name"],
-                       email: params["email"])
+                       comments: params["comments"])
     view "create_rsvp"
 end
 
@@ -65,8 +67,10 @@ end
 
 post "/users/create" do
     puts params
-    hashed_password = BCrypt::Password.create(params["password"])
-    users_table.insert(name: params["name"], email: params["email"], password: hashed_password)
+        users_table.insert(name: params["name"], 
+                    email: params["email"], 
+                    password: BCrypt::Password.create(params["password"])
+                    )
     view "create_user"
 end
 
@@ -81,14 +85,20 @@ post "/logins/create" do
     @user = users_table.where(email: email_address).to_a[0]
 
     if @user
+        if @user
+            BCrypt::Password.new(@user[:password]) == password 
+            session["user_id"] = @user[:id]
         view "create_login"
     else
         view "create_login_failed"
     end
 end
+end
+
 
 get "/logout" do
     session["user_id"] = nil
     @current_user = nil
     view "logout"
 end
+
