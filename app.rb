@@ -82,20 +82,23 @@ get "/logins/new" do
 end
 
 post "/logins/create" do
-    puts params
-    email_address = params["email"]
-    password = params["password"]
-    @user = users_table.where(email: email_address).to_a[0]
+    puts "params: #{params}"
+
+    # step 1: user with the params["email"] ?
+    @user = users_table.where(email: params["email"]).to_a[0]
 
     if @user
-        if @user
-            BCrypt::Password.new(@user[:password]) == password 
+        # step 2: if @user, does the encrypted password match?
+        if BCrypt::Password.new(@user[:password]) == params["password"]
+            # set encrypted cookie for logged in user
             session["user_id"] = @user[:id]
-        view "create_login"
+            redirect "/"
+        else
+            view "create_login_failed"
+        end
     else
         view "create_login_failed"
     end
-end
 end
 
 
