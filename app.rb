@@ -84,13 +84,13 @@ end
 post "/logins/create" do
     puts "params: #{params}"
 
-    # step 1: user with the params["email"] ?
+    
     @user = users_table.where(email: params["email"]).to_a[0]
 
     if @user
-        # step 2: if @user, does the encrypted password match?
+     
         if BCrypt::Password.new(@user[:password]) == params["password"]
-            # set encrypted cookie for logged in user
+           
             session["user_id"] = @user[:id]
             redirect "/"
         else
